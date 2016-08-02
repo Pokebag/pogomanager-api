@@ -1,77 +1,139 @@
 'use strict'
 
+let Long = require('long')
 let path = require('path')
 let pogobuf = require('pogobuf')
-let Pokedex = require('pokedex-promise-v2')
+let POGOProtos = require('node-pogo-protos')
 
 
 
 
 
-let moves = require(path.resolve(__dirname, '..', 'data', 'moves.json'))
+let buildMon = require('../helpers/buildMon')
+
+
+
+
+
 let client = new pogobuf.Client()
 let login = new pogobuf.GoogleLogin()
 let utils = pogobuf.Utils
-let P = new Pokedex()
 
 
 
 
 
-let latitude = 43.060792
-let longitude = -89.410350
+/******************************************************************************\
+  Full Inventory
+\******************************************************************************/
 
+module.exports.inventory = function * inventory (next) {
+  let data
 
+  console.log(this.state)
 
+  return yield login.login(this.state.username, this.state.password)
+  .then(token => {
+    client.setAuthInfo('google', token)
+    return client.init()
 
+  })
+  .then(() => {
+    return client.getInventory()
 
-function buildMon (inventoryData, pokedexData) {
-  return {
-    moves: [
-      moves[inventoryData.move_1],
-      moves[inventoryData.move_2]
-    ],
-    name: pokedexData.name,
-    nickname: pokedexData.nickname,
-    no: inventoryData.pokemon_id,
-    sprites: pokedexData.sprites,
-    stats: {
-      cp: inventoryData.cp,
-      cp_multiplier: inventoryData.cp_multiplier,
-      current_hp: inventoryData.stamina,
-      height: inventoryData.height_m,
-      iv: {
-        attack: inventoryData.individual_attack,
-        defense: inventoryData.individual_defense,
-        stamina: inventoryData.individual_stamina
-      },
-      max_hp: inventoryData.stamina_max,
-      upgrades: inventoryData.num_upgrades,
-      weight: inventoryData.weight_kg,
-    }
-  }
+  })
+  .then(inventory => {
+    this.body.data = utils.splitInventory(inventory)
+
+    this.body.data.items.forEach((item, index, array) => {
+      array[index].name = utils.getEnumKeyByValue(POGOProtos.Inventory.Item.ItemId, item.item_id)
+    })
+
+//    delete this.body.data.applied_items
+//    delete this.body.data.currency
+//    delete this.body.data.camera
+//    delete this.body.data.candies
+//    delete this.body.data.egg_incubators
+//    delete this.body.data.inventory_upgrades
+//    delete this.body.data.player
+//    delete this.body.data.pokedex
+//    delete this.body.data.pokemon
+//    delete this.body.data.items
+
+    return next
+
+  })
+  .catch(error => {
+    throw error
+  })
 }
 
 
 
 
+/******************************************************************************\
+  Candy
+\******************************************************************************/
 
-module.exports.items = function * items (next) {
-  return yield login.login('spam@trezy.com', 'fuckitall')
+module.exports.candies = function * candies (next) {
+  let data
+
+  return yield login.login(this.state.username, this.state.password)
   .then(token => {
     client.setAuthInfo('google', token)
-    client.setPosition(latitude, longitude)
     return client.init()
+
   })
   .then(() => {
     return client.getInventory()
+
   })
-  .then((inventory) => {
-    this.body = utils.splitInventory(inventory).items
+  .then(inventory => {
+    this.body.data = utils.splitInventory(inventory).candies
+
+    this.body.data.forEach((candy, index, array) => {
+      array[index].family = utils.getEnumKeyByValue(POGOProtos.Enums.PokemonFamilyId, candy.family_id)
+    })
 
     return next
+
   })
-  .catch((error) => {
+  .catch(error => {
+    throw error
+  })
+}
+
+
+
+
+/******************************************************************************\
+  Items
+\******************************************************************************/
+
+module.exports.items = function * items (next) {
+  let data
+
+  return yield login.login(this.state.username, this.state.password)
+  .then(token => {
+    client.setAuthInfo('google', token)
+    return client.init()
+
+  })
+  .then(() => {
+    return client.getInventory()
+
+  })
+  .then(inventory => {
+    this.body.data = utils.splitInventory(inventory).items
+
+    this.body.data.forEach((item, index, array) => {
+      array[index].name = utils.getEnumKeyByValue(POGOProtos.Inventory.Item.ItemId, item.item_id)
+    })
+
+    return next
+
+  })
+  .catch(error => {
     throw error
   })
 }
@@ -80,36 +142,36 @@ module.exports.items = function * items (next) {
 
 
 
+/******************************************************************************\
+  Pokemon
+\******************************************************************************/
+
 module.exports.pokemon = function * pokemon (next) {
-  return yield login.login('spam@trezy.com', 'fuckitall')
+  let data
+
+  return yield login.login(this.state.username, this.state.password)
   .then(token => {
     client.setAuthInfo('google', token)
-    client.setPosition(latitude, longitude)
     return client.init()
+
   })
   .then(() => {
     return client.getInventory()
-  })
-  .then((inventory) => {
-    this.body = utils.splitInventory(inventory).pokemon
-  })
-  .then(() => {
-    let promises = []
 
-    this.body.forEach((mon) => {
-      promises.push(P.getPokemonByName(mon.pokemon_id))
-    })
-
-    return Promise.all(promises)
   })
-  .then((pokedexData) => {
-    this.body.forEach((mon, index, array) => {
-      array[index] = buildMon(mon, pokedexData[index])
+  .then(inventory => {
+    this.body.data = []
+
+    utils.splitInventory(inventory).pokemon.forEach((mon, index, array) => {
+      if (!mon.is_egg) {
+        this.body.data.push(buildMon(mon))
+      }
     })
 
     return next
+
   })
-  .catch((error) => {
+  .catch(error => {
     throw error
   })
 }

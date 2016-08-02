@@ -1,17 +1,16 @@
 'use strict'
 
-
-
-
-
 /******************************************************************************\
   Module imports
 \******************************************************************************/
 
+let bodyBuilder = require('./middleware/bodyBuilder')
+let bodyParser = require('koa-bodyparser')
 let compress = require('koa-compress')
+let errorHandler = require('./middleware/errorHandler')
 let koa = require('koa')
 let logger = require('koa-logger')
-let route = require('koa-route')
+let router = require('koa-router')()
 
 
 
@@ -21,7 +20,11 @@ let route = require('koa-route')
   Route controllers
 \******************************************************************************/
 
+let auth = require('./controllers/auth')
 let inventory = require('./controllers/inventory')
+let pokedex = require('./controllers/pokedex')
+let pokemon = require('./controllers/pokemon')
+let config = require('./config.json')
 
 
 
@@ -40,18 +43,20 @@ let app = koa()
   Pre route middleware
 \******************************************************************************/
 
-// Error handling
-
-app.use(function * errorHandler (next) {
-  try {
-    yield next
-
-  } catch (error) {
-    this.status = error.status || 500
-    this.body = error.message
-    this.app.emit('error', error, this)
+app.use(function * (next) {
+  this.state = {
+    password: config.password,
+    username: config.username
   }
+
+  yield next
 })
+
+app.use(bodyBuilder())
+
+app.use(errorHandler())
+
+app.use(bodyParser())
 
 app.use(logger())
 
@@ -63,8 +68,26 @@ app.use(logger())
   Routes
 \******************************************************************************/
 
-app.use(route.get('/inventory/pokemon', inventory.pokemon))
-app.use(route.get('/inventory/items', inventory.items))
+router.post('/evolve', pokemon.evolve)
+
+router.get('/inventory', inventory.inventory)
+
+router.get('/candies', inventory.candies)
+
+router.get('/items', inventory.items)
+
+router.get('/login', auth.login)
+
+router.get('/pokedex/:no', pokedex)
+
+router.get('/pokemon', inventory.pokemon)
+
+router.post('/power-up', pokemon.powerUp)
+
+router.post('/transfer', pokemon.transfer)
+
+app.use(router.routes())
+app.use(router.allowedMethods())
 
 
 
@@ -84,4 +107,5 @@ app.use(compress())
   Start the app
 \******************************************************************************/
 
-app.listen(3000)
+console.log('Listening on port', process.env.PORT || 3001)
+app.listen(process.env.PORT || 3001)
