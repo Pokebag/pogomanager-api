@@ -1,5 +1,6 @@
 'use strict'
 
+let _ = require('lodash')
 let Long = require('long')
 let path = require('path')
 let pogobuf = require('pogobuf')
@@ -29,8 +30,6 @@ let utils = pogobuf.Utils
 
 module.exports.inventory = function * inventory (next) {
   let data
-
-  console.log(this.state)
 
   return yield login.login(this.state.username, this.state.password)
   .then(token => {
@@ -156,6 +155,14 @@ module.exports.pokemon = function * pokemon (next) {
 
   })
   .then(() => {
+    return client.downloadItemTemplates()
+
+  })
+  .then((templates) => {
+    this.state.pokemon_info = utils.splitItemTemplates(templates).pokemon_settings
+
+  })
+  .then(() => {
     return client.getInventory()
 
   })
@@ -164,7 +171,13 @@ module.exports.pokemon = function * pokemon (next) {
 
     utils.splitInventory(inventory).pokemon.forEach((mon, index, array) => {
       if (!mon.is_egg) {
-        this.body.data.push(buildMon(mon))
+        let baseInfo = _.find(this.state.pokemon_info, {
+          pokemon_id: mon.pokemon_id
+        })
+
+        mon = buildMon(mon, baseInfo)
+
+        this.body.data.push(mon)
       }
     })
 

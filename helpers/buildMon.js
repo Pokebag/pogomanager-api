@@ -15,10 +15,10 @@ let utils = pogobuf.Utils
 
 
 
-module.exports = function buildMon (inventoryData) {
+module.exports = function buildMon (inventoryData, baseInfo) {
   let longID = new Long(inventoryData.id.low, inventoryData.id.high, inventoryData.id.unsigned).toString()
 
-  return {
+  let mon = {
     id: inventoryData.id,
     longID: longID,
     moves: [
@@ -44,4 +44,24 @@ module.exports = function buildMon (inventoryData) {
       weight: inventoryData.weight_kg,
     }
   }
+
+  if (baseInfo) {
+    mon.stats.base = {
+      attack: baseInfo.stats.base_attack,
+      defense: baseInfo.stats.base_defense,
+      stamina: baseInfo.stats.base_stamina
+    }
+
+    if (baseInfo.candy_to_evolve) {
+      mon.stats.toEvolve = baseInfo.candy_to_evolve
+    }
+
+    mon.types = [baseInfo.type]
+
+    if (baseInfo.type2) {
+      mon.types.push(baseInfo.type2)
+    }
+  }
+
+  return mon
 }
