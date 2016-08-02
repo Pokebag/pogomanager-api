@@ -8,6 +8,12 @@ let pogobuf = require('pogobuf')
 
 
 
+let buildMon = require('../helpers/buildMon')
+
+
+
+
+
 let client = new pogobuf.Client()
 let login = new pogobuf.GoogleLogin()
 let utils = pogobuf.Utils
@@ -35,7 +41,7 @@ module.exports.evolve = function * evolve (next) {
 
   })
   .then(response => {
-    this.body.data = response
+    this.body.data = buildMon(response.evolved_pokemon_data)
 
     return next
 
@@ -68,7 +74,7 @@ module.exports.powerUp = function * powerUp (next) {
 
   })
   .then(response => {
-    this.body.data = response
+    this.body.data = buildMon(response.upgraded_pokemon)
 
     return next
 
