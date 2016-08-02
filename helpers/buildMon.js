@@ -53,7 +53,7 @@ module.exports = function buildMon (inventoryData, baseInfo) {
     }
 
     if (baseInfo.candy_to_evolve) {
-      mon.stats.toEvolve = baseInfo.candy_to_evolve
+      mon.toEvolve = baseInfo.candy_to_evolve
     }
 
     mon.types = [baseInfo.type]
