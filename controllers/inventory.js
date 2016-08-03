@@ -101,7 +101,7 @@ module.exports.pokemon = function * pokemon (next) {
 
   pogobuf.Utils.splitInventory(inventory).pokemon.forEach((mon, index, array) => {
     if (!mon.is_egg) {
-      this.body.data.push(buildMon(mon))
+      this.body.data.push(buildMon.call(this, mon))
     }
   })
 

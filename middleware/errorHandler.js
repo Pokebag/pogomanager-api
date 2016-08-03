@@ -5,15 +5,10 @@ function * errorHandler (next) {
     yield next
 
   } catch (error) {
-    console.log(typeof this.body, this.body)
     this.status = error.status || 500
     this.body.errors = [
       error.message
     ]
-
-    if (typeof this.body === 'string') {
-      this.body = JSON.parse(this.body)
-    }
 
     this.body.meta.end_ms = Date.now()
     this.body.meta.response_ms = (this.body.meta.end_ms - this.body.meta.start_ms)
