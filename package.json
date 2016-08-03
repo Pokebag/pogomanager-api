@@ -9,7 +9,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "babel-polyfill": "^6.9.1",
     "koa": "^1.2.1",
     "koa-bodyparser": "^2.2.0",
     "koa-compress": "^1.0.9",
@@ -18,8 +17,7 @@
     "lodash": "^4.14.1",
     "long": "^3.2.0",
     "pogobuf": "^1.4.0",
-    "pokedex-promise-v2": "^2.3.0",
-    "request": "^2.74.0"
+    "pokedex-promise-v2": "^2.3.0"
   },
   "devDependencies": {
     "babel-preset-es2015": "^6.9.0"

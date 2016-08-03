@@ -27,28 +27,13 @@ let utils = pogobuf.Utils
 \******************************************************************************/
 
 module.exports.evolve = function * evolve (next) {
-  let data
   let id = new Long(this.request.body.low, this.request.body.high, this.request.body.unsigned)
 
-  return yield login.login(this.state.username, this.state.password)
-  .then(token => {
-    client.setAuthInfo('google', token)
-    return client.init()
+  let response = yield this.state.client.evolvePokemon(id)
 
-  })
-  .then(() => {
-    return client.evolvePokemon(id)
+  this.body.data = buildMon(response.evolved_pokemon_data)
 
-  })
-  .then(response => {
-    this.body.data = buildMon(response.evolved_pokemon_data)
-
-    return next
-
-  })
-  .catch(error => {
-    throw error
-  })
+  yield next
 }
 
 
@@ -60,28 +45,13 @@ module.exports.evolve = function * evolve (next) {
 \******************************************************************************/
 
 module.exports.powerUp = function * powerUp (next) {
-  let data
   let id = new Long(this.request.body.low, this.request.body.high, this.request.body.unsigned)
 
-  return yield login.login(this.state.username, this.state.password)
-  .then(token => {
-    client.setAuthInfo('google', token)
-    return client.init()
+  let response = yield this.state.client.upgradePokemon(id)
 
-  })
-  .then(() => {
-    return client.upgradePokemon(id)
+  this.body.data = buildMon(response.upgraded_pokemon)
 
-  })
-  .then(response => {
-    this.body.data = buildMon(response.upgraded_pokemon)
-
-    return next
-
-  })
-  .catch(error => {
-    throw error
-  })
+  yield next
 }
 
 
@@ -93,26 +63,11 @@ module.exports.powerUp = function * powerUp (next) {
 \******************************************************************************/
 
 module.exports.transfer = function * transfer (next) {
-  let data
   let id = new Long(this.request.body.low, this.request.body.high, this.request.body.unsigned)
 
-  return yield login.login(this.state.username, this.state.password)
-  .then(token => {
-    client.setAuthInfo('google', token)
-    return client.init()
+  let response = yield this.state.client.releasePokemon(id)
 
-  })
-  .then(() => {
-    return client.releasePokemon(id)
+  this.body.data = buildMon(response)
 
-  })
-  .then(response => {
-    this.body.data = response
-
-    return next
-
-  })
-  .catch(error => {
-    throw error
-  })
+  yield next
 }

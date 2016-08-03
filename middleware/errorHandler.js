@@ -5,6 +5,7 @@ function * errorHandler (next) {
     yield next
 
   } catch (error) {
+    console.log(typeof this.body, this.body)
     this.status = error.status || 500
     this.body.errors = [
       error.message

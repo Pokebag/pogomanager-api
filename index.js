@@ -8,8 +8,10 @@ let bodyBuilder = require('./middleware/bodyBuilder')
 let bodyParser = require('koa-bodyparser')
 let compress = require('koa-compress')
 let errorHandler = require('./middleware/errorHandler')
+let getItemTemplates = require('./middleware/getItemTemplates')
 let koa = require('koa')
 let logger = require('koa-logger')
+let login = require('./middleware/login')
 let router = require('koa-router')()
 
 
@@ -52,13 +54,21 @@ app.use(function * (next) {
   yield next
 })
 
-app.use(bodyBuilder())
+app.use(compress())
 
 app.use(errorHandler())
 
+app.use(logger())
+
 app.use(bodyParser())
 
-app.use(logger())
+app.use(bodyBuilder())
+
+app.use(login())
+
+app.use(getItemTemplates())
+
+
 
 
 
@@ -97,7 +107,7 @@ app.use(router.allowedMethods())
   Post route middleware
 \******************************************************************************/
 
-app.use(compress())
+//app.use(compress())
 
 
 
