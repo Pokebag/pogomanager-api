@@ -85,7 +85,7 @@ function getType (key) {
 module.exports = function buildMon (inventoryData) {
   let longID = new Long(inventoryData.id.low, inventoryData.id.high, inventoryData.id.unsigned).toString()
 
-  let specials = _.findWhere(specialStats, {no: inventoryData.pokemon_id})
+  let specials = _.find(specialStats, {no: inventoryData.pokemon_id})
 
   let mon = {
     id: inventoryData.id,
@@ -101,17 +101,21 @@ module.exports = function buildMon (inventoryData) {
       cpMultiplier: inventoryData.cp_multiplier,
       currentHP: inventoryData.stamina,
       height: inventoryData.height_m,
+      hp: {
+        current: inventoryData.stamina,
+        max: inventoryData.stamina_max
+      },
       iv: {
         attack: inventoryData.individual_attack,
         defense: inventoryData.individual_defense,
-        stamina: inventoryData.individual_stamina,
-        special: {
-          attack: specials.specialAttack,
-          defense: specials.specialDefense
-        },
-        speed: specials.speed
+        stamina: inventoryData.individual_stamina
       },
       maxHP: inventoryData.stamina_max,
+      special: {
+        attack: specials.specialAttack,
+        defense: specials.specialDefense
+      },
+      speed: specials.speed,
       upgrades: inventoryData.num_upgrades,
       weight: inventoryData.weight_kg,
     }
