@@ -110,6 +110,7 @@ module.exports = function buildMon (inventoryData) {
   mon.moves.push(getMove.call(this, inventoryData.move_1))
   mon.moves.push(getMove.call(this, inventoryData.move_2))
 
+  mon.family_id = baseInfo.family_id
   mon.family = getFamily(baseInfo.family_id)
 
   mon.stats.base = {
