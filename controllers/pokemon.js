@@ -31,7 +31,11 @@ module.exports.evolve = function * evolve (next) {
 
   let response = yield this.state.client.evolvePokemon(id)
 
-  this.body.data = buildMon(response.evolved_pokemon_data)
+  if (!response.evolved_pokemon_data) {
+    return new Error('Failed to evolve. That sucks.')
+  }
+
+  this.body.data = buildMon.call(this, response.evolved_pokemon_data)
 
   yield next
 }
@@ -49,7 +53,11 @@ module.exports.powerUp = function * powerUp (next) {
 
   let response = yield this.state.client.upgradePokemon(id)
 
-  this.body.data = buildMon(response.upgraded_pokemon)
+  if (!response.upgraded_pokemon) {
+    return new Error('Not enough candies or stardust. I dun fucking know.')
+  }
+
+  this.body.data = buildMon.call(this, response.upgraded_pokemon)
 
   yield next
 }
@@ -67,7 +75,7 @@ module.exports.transfer = function * transfer (next) {
 
   let response = yield this.state.client.releasePokemon(id)
 
-  this.body.data = buildMon(response)
+  this.body.data = buildMon.call(this, response)
 
   yield next
 }
