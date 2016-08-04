@@ -57,10 +57,14 @@ module.exports.candies = function * candies (next) {
 
   let inventory = yield this.state.client.getInventory()
 
-  this.body.data = pogobuf.Utils.splitInventory(inventory).candies
+  this.body.data = []
 
-  this.body.data.forEach((candy, index, array) => {
-    array[index].family = pogobuf.Utils.getEnumKeyByValue(POGOProtos.Enums.PokemonFamilyId, candy.family_id).replace('Family ', '')
+  pogobuf.Utils.splitInventory(inventory).candies.forEach((candy, index, array) => {
+    this.body.data.push({
+      count: candy.candy,
+      family: pogobuf.Utils.getEnumKeyByValue(POGOProtos.Enums.PokemonFamilyId, candy.family_id).replace('Family ', ''),
+      family_id: candy.family_id
+    })
   })
 
   yield next
