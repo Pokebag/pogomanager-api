@@ -22,7 +22,6 @@ let router = require('koa-router')()
   Route controllers
 \******************************************************************************/
 
-let auth = require('./controllers/auth')
 let inventory = require('./controllers/inventory')
 let pokedex = require('./controllers/pokedex')
 let pokemon = require('./controllers/pokemon')
@@ -86,8 +85,6 @@ router.get('/inventory', inventory.inventory)
 router.get('/candies', inventory.candies)
 
 router.get('/items', inventory.items)
-
-router.get('/login', auth.login)
 
 router.get('/pokedex/:no', pokedex)
 
