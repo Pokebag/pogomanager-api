@@ -26,6 +26,7 @@ let auth = require('./controllers/auth')
 let inventory = require('./controllers/inventory')
 let pokedex = require('./controllers/pokedex')
 let pokemon = require('./controllers/pokemon')
+let templates = require('./controllers/templates')
 let config = require('./config.json')
 
 
@@ -93,6 +94,8 @@ router.get('/pokedex/:no', pokedex)
 router.get('/pokemon', inventory.pokemon)
 
 router.post('/power-up', pokemon.powerUp)
+
+router.get('/templates', templates.templates)
 
 router.post('/transfer', pokemon.transfer)
 

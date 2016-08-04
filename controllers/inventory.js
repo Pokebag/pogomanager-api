@@ -21,8 +21,6 @@ let buildMon = require('../helpers/buildMon')
 \******************************************************************************/
 
 module.exports.inventory = function * inventory (next) {
-  let data
-
   let inventory = yield this.state.client.getInventory()
 
   this.body.data = pogobuf.Utils.splitInventory(inventory)
