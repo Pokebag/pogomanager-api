@@ -94,7 +94,6 @@ module.exports = function buildMon (inventoryData) {
     name: getName(inventoryData.pokemon_id),
     nickname: inventoryData.nickname,
     no: inventoryData.pokemon_id,
-    raw1: inventoryData,
     stats: {
       additionalCpMultiplier: inventoryData.additional_cp_multiplier,
       cp: inventoryData.cp,
@@ -124,8 +123,6 @@ module.exports = function buildMon (inventoryData) {
   let baseInfo = _.find(this.state.templates.pokemon_settings, {
     pokemon_id: mon.no
   })
-
-  mon.raw2 = baseInfo
 
   mon.moves.push(getMove.call(this, inventoryData.move_1))
   mon.moves.push(getMove.call(this, inventoryData.move_2))
