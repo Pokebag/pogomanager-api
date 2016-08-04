@@ -4,7 +4,13 @@ This is the API for [http://pokeb.ag](http://pokeb.ag), the online inventory man
 
 ## Development
 
-To run the API:
+### Prerequisites
+
+* [Git](https://git-scm.com/)
+
+* [Nodejs](https://nodejs.org) (preferably [nvm](https://github.com/creationix/nvm))
+
+### To run the API:
 
 1. Clone the repository: `git clone git@github.com:Pokebag/pokebag-api.git && cd pokebag-api`
 
