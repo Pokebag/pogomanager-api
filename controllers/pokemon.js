@@ -35,7 +35,11 @@ module.exports.evolve = function * evolve (next) {
     return new Error('Failed to evolve. That sucks.')
   }
 
-  this.body.data = buildMon.call(this, response.evolved_pokemon_data)
+  this.body.data = {
+    candies: response.candy_awarded,
+    xp: response.experience_awarded,
+    pokemon: buildMon.call(this, response.evolved_pokemon_data)
+  }
 
   yield next
 }
@@ -75,7 +79,9 @@ module.exports.transfer = function * transfer (next) {
 
   let response = yield this.state.client.releasePokemon(id)
 
-  this.body.data = response
+  this.body.data = {
+    candies: response.candy_awarded
+  }
 
   yield next
 }
