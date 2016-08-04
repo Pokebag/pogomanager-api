@@ -10,6 +10,12 @@ let POGOProtos = require('node-pogo-protos')
 
 
 
+let specialStats = require('../data/special-stats.json')
+
+
+
+
+
 let junkTexts = {
   family: 'Family ',
   move: ' Fast',
@@ -79,6 +85,8 @@ function getType (key) {
 module.exports = function buildMon (inventoryData) {
   let longID = new Long(inventoryData.id.low, inventoryData.id.high, inventoryData.id.unsigned).toString()
 
+  let specials = _.findWhere(specialStats, {no: inventoryData.pokemon_id})
+
   let mon = {
     id: inventoryData.id,
     longID: longID,
@@ -86,6 +94,7 @@ module.exports = function buildMon (inventoryData) {
     name: getName(inventoryData.pokemon_id),
     nickname: inventoryData.nickname,
     no: inventoryData.pokemon_id,
+    raw1: inventoryData,
     stats: {
       additionalCpMultiplier: inventoryData.additional_cp_multiplier,
       cp: inventoryData.cp,
@@ -95,7 +104,12 @@ module.exports = function buildMon (inventoryData) {
       iv: {
         attack: inventoryData.individual_attack,
         defense: inventoryData.individual_defense,
-        stamina: inventoryData.individual_stamina
+        stamina: inventoryData.individual_stamina,
+        special: {
+          attack: specials.specialAttack,
+          defense: specials.specialDefense
+        },
+        speed: specials.speed
       },
       maxHP: inventoryData.stamina_max,
       upgrades: inventoryData.num_upgrades,
@@ -106,6 +120,8 @@ module.exports = function buildMon (inventoryData) {
   let baseInfo = _.find(this.state.templates.pokemon_settings, {
     pokemon_id: mon.no
   })
+
+  mon.raw2 = baseInfo
 
   mon.moves.push(getMove.call(this, inventoryData.move_1))
   mon.moves.push(getMove.call(this, inventoryData.move_2))
