@@ -75,7 +75,7 @@ module.exports.transfer = function * transfer (next) {
 
   let response = yield this.state.client.releasePokemon(id)
 
-  this.body.data = buildMon.call(this, response)
+  this.body.data = response
 
   yield next
 }
