@@ -2,7 +2,6 @@
 
 let _ = require('lodash')
 let Long = require('long')
-let path = require('path')
 let pogobuf = require('pogobuf')
 let POGOProtos = require('node-pogo-protos')
 
@@ -10,6 +9,7 @@ let POGOProtos = require('node-pogo-protos')
 
 
 
+let findOrUpdateLevel = require('../helpers/findOrUpdateLevel')
 let specialStats = require('../data/special-stats.json')
 
 
@@ -89,6 +89,7 @@ module.exports = function buildMon (inventoryData) {
 
   let mon = {
     id: inventoryData.id,
+    level: findOrUpdateLevel(inventoryData.cp_multiplier),
     longID: longID,
     moves: [],
     name: getName(inventoryData.pokemon_id),
