@@ -83,9 +83,12 @@ function getType (key) {
 
 
 module.exports = function buildMon (inventoryData) {
+  let baseInfo = _.find(this.state.templates.pokemon_settings, {
+    pokemon_id: inventoryData.pokemon_id
+  })
   let longID = new Long(inventoryData.id.low, inventoryData.id.high, inventoryData.id.unsigned).toString()
-
   let specials = _.find(specialStats, {no: inventoryData.pokemon_id})
+  let upgradeInfo = this.state.templates.pokemon_upgrade_settings
 
   let mon = {
     id: inventoryData.id,
@@ -121,10 +124,6 @@ module.exports = function buildMon (inventoryData) {
     }
   }
 
-  let baseInfo = _.find(this.state.templates.pokemon_settings, {
-    pokemon_id: mon.no
-  })
-
   mon.moves.push(getMove.call(this, inventoryData.move_1))
   mon.moves.push(getMove.call(this, inventoryData.move_2))
 
@@ -139,6 +138,14 @@ module.exports = function buildMon (inventoryData) {
 
   if (baseInfo.candy_to_evolve) {
     mon.toEvolve = baseInfo.candy_to_evolve
+  }
+
+  if (mon.level < 40) {
+    let levelFloor = Math.floor(mon.level)
+    mon.toPowerUp = {
+      candy: upgradeInfo.candy_cost[levelFloor],
+      stardust: upgradeInfo.stardust_cost[levelFloor]
+    }
   }
 
   mon.types = [getType(baseInfo.type)]
