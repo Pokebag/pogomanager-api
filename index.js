@@ -4,29 +4,41 @@
   Module imports
 \******************************************************************************/
 
-let bodyBuilder = require('./middleware/bodyBuilder')
-let bodyParser = require('koa-bodyparser')
-let compress = require('koa-compress')
-let errorHandler = require('./middleware/errorHandler')
-let getItemTemplates = require('./middleware/getItemTemplates')
-let koa = require('koa')
-let logger = require('koa-logger')
-let login = require('./middleware/login')
-let router = require('koa-router')()
+let fs = require('fs')
+let mongoose = require('mongoose')
+let path = require('path')
+
+let config = require('./config.json')
 
 
 
 
 
 /******************************************************************************\
-  Route controllers
+  Initialize the database
 \******************************************************************************/
 
-let inventory = require('./controllers/inventory')
-let pokedex = require('./controllers/pokedex')
-let pokemon = require('./controllers/pokemon')
-let templates = require('./controllers/templates')
-let config = require('./config.json')
+// Connect
+mongoose.connect('mongodb://' + config.mongo.hostname + ':' + config.mongo.port + '/' + config.mongo.database)
+
+// Set up logging
+mongoose.connection.on('error', function (error) {
+  console.error(error);
+})
+
+
+
+
+
+/******************************************************************************\
+  Load our mongoose models
+\******************************************************************************/
+
+let modelPath = path.resolve('.', 'models')
+
+fs.readdirSync(modelPath).forEach(function (file) {
+  require(path.resolve(modelPath, file))
+})
 
 
 
@@ -35,76 +47,36 @@ let config = require('./config.json')
 /******************************************************************************\
   Initialize the app
 \******************************************************************************/
+
+// Import
+let koa = require('koa')
+
+// Start Koa
 let app = koa()
 
+// Configure middleware, et al
+require('./config/koa')(app, config)
+
 
 
 
 
 /******************************************************************************\
-  Middleware
+  Initialize the router
 \******************************************************************************/
 
-app.use(function * (next) {
-  this.state = {
-    password: config.password,
-    username: config.username
-  }
+// Import
+let router = require('koa-router')()
 
-  yield next
-})
-
-app.use(compress())
-
-app.use(errorHandler())
-
-app.use(logger())
-
-app.use(bodyParser())
-
-app.use(bodyBuilder())
-
-app.use(login())
-
-app.use(getItemTemplates())
-
-
+// Configure
+require('./config/router')(app, router, config)
 
 
 
 
 
 /******************************************************************************\
-  Routes
-\******************************************************************************/
-
-router.post('/evolve', pokemon.evolve)
-
-router.get('/inventory', inventory.inventory)
-
-router.get('/candies', inventory.candies)
-
-router.get('/items', inventory.items)
-
-router.get('/pokedex/:no', pokedex)
-
-router.get('/pokemon', inventory.pokemon)
-
-router.post('/power-up', pokemon.powerUp)
-
-router.get('/templates', templates.templates)
-
-router.post('/transfer', pokemon.transfer)
-
-app.use(router.routes())
-app.use(router.allowedMethods())
-
-
-
-
-
-/******************************************************************************\
-  Start the app
+  Start the server
 \******************************************************************************/
 
 console.log('Listening on port', process.env.PORT || 3001)
