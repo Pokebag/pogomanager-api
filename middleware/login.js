@@ -7,24 +7,29 @@ let pogobuf = require('pogobuf')
 
 
 function * login (next) {
-  let GoogleAuth = new pogobuf.GoogleLogin()
+  if (this.session.token) {
+    let GoogleAuth = new pogobuf.GoogleLogin()
 
-  this.state.client = new pogobuf.Client()
+    this.state.client = new pogobuf.Client()
 
-  let token = yield GoogleAuth.getToken(this.session.email, {
-    androidId: '9774d56d682e549c',
-    masterToken: this.session.token
-  })
-  .then(authData => {
-    console.log(authData)
-    return authData.Auth
-  })
+    let token = yield GoogleAuth.getToken(this.session.email, {
+      androidId: '9774d56d682e549c',
+      masterToken: this.session.token
+    })
+    .then(authData => {
+      return authData.Auth
+    })
 
-  this.state.client.setAuthInfo('google', token)
+    this.state.client.setAuthInfo('google', token)
 
-  yield this.state.client.init()
+    yield this.state.client.init()
 
-  yield next
+    yield next
+
+  } else {
+    this.body.errors.push('No user is logged in.')
+    this.status = 403
+  }
 }
 
 
