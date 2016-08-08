@@ -1,4 +1,15 @@
 {
+  "app": {
+    "env": "development",
+    "keys": [
+      "abcdefghijklmnopqrstuvwxyz1234567890"
+    ]
+  },
+  "mongo": {
+    "database": "pokebag",
+    "hostname": "localhost",
+    "port": "27017"
+  },
   "password": "[YOUR PASSWORD]",
-  "username": "[YOUR USERNAME OR EMAIL]"
+  "username": "[YOUR USERNAME OR EMAIL]",
 }
