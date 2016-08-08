@@ -6,10 +6,8 @@ function * errorHandler (next) {
 
   } catch (error) {
     this.status = error.status || 500
-    this.body.errors = [
-      error.message
-    ]
 
+    this.body.errors.push(error.message)
     this.body.meta.end_ms = Date.now()
     this.body.meta.response_ms = (this.body.meta.end_ms - this.body.meta.start_ms)
 
