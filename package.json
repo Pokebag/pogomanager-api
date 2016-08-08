@@ -9,7 +9,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "bcrypt": "^0.8.7",
     "co": "^4.6.0",
     "gpsoauthnode": "0.0.5",
     "koa": "^1.2.1",
