@@ -11,12 +11,14 @@ function * login (next) {
 
   this.state.client = new pogobuf.Client()
 
-  let token = yield GoogleAuth.getToken(this.session.email, this.session.token)
+  let token = yield GoogleAuth.getToken(this.session.email, {
+    androidId: '9774d56d682e549c',
+    masterToken: this.session.token
+  })
   .then(authData => {
+    console.log(authData)
     return authData.Auth
   })
-
-  console.log(token)
 
   this.state.client.setAuthInfo('google', token)
 

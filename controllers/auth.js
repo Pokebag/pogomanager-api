@@ -42,6 +42,7 @@ module.exports.login = function * login (next) {
   this.body.data = user
 
   this.session.email = user.email
+  this.session.id = user._id
   this.session.token = user.token
 
   yield next
