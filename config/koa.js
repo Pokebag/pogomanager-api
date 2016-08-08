@@ -31,15 +31,6 @@ module.exports = function (app, config) {
     Set up middleware
   \******************************************************************************/
 
-  app.use(function * (next) {
-    this.state = {
-      password: config.password,
-      username: config.username
-    }
-
-    yield next
-  })
-
   app.use(logger())
   app.use(compress())
   app.use(session(app))
