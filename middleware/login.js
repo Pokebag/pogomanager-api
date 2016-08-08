@@ -7,14 +7,17 @@ let pogobuf = require('pogobuf')
 
 
 function * login (next) {
-  if (this.session.token) {
+  let email = this.cookies.get('email')
+  let masterToken = this.cookies.get('token')
+
+  if (email && masterToken) {
     let GoogleAuth = new pogobuf.GoogleLogin()
 
     this.state.client = new pogobuf.Client()
 
-    let token = yield GoogleAuth.getToken(this.session.email, {
+    let token = yield GoogleAuth.getToken(email, {
       androidId: '9774d56d682e549c',
-      masterToken: this.session.token
+      masterToken: masterToken
     })
     .then(authData => {
       return authData.Auth
