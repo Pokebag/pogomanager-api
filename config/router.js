@@ -45,10 +45,10 @@ module.exports = function (app, router, config) {
     POST routes
   \******************************************************************************/
 
-  router.post('/evolve', login(), pokemon.evolve)
+  router.post('/evolve', login(), getItemTemplates(), pokemon.evolve)
   router.post('/login', auth.login)
   router.post('/logout', auth.logout)
-  router.post('/power-up', login(), pokemon.powerUp)
+  router.post('/power-up', login(), getItemTemplates(), pokemon.powerUp)
   router.post('/transfer', login(), pokemon.transfer)
 
 

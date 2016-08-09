@@ -1,6 +1,5 @@
 'use strict'
 
-let bcrypt = require('bcrypt')
 let co = require('co')
 let mongoose = require('mongoose')
 let Schema = mongoose.Schema
