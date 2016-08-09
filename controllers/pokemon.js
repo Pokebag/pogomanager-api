@@ -58,7 +58,7 @@ module.exports.powerUp = function * powerUp (next) {
   let response = yield this.state.client.upgradePokemon(id)
 
   if (!response.upgraded_pokemon) {
-    return new Error('Not enough candies or stardust. I dun fucking know.')
+    return new Error('Not enough candies or stardust. I don\'t fucking know.')
   }
 
   this.body.data = buildMon.call(this, response.upgraded_pokemon)
