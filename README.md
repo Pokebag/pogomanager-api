@@ -20,7 +20,7 @@ This is the API for [http://pokeb.ag](http://pokeb.ag), the online inventory man
 
 1. Copy `config-example.json` to `config.json`
 
-1. Start the koa server: `node index.js`
+1. Start the koa server: `npm start`
 
 ## Contributing
 
