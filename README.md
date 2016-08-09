@@ -8,6 +8,8 @@ This is the API for [http://pokeb.ag](http://pokeb.ag), the online inventory man
 
 * [Git](https://git-scm.com/)
 
+* [MongoDB](https://www.mongodb.com/)
+
 * [Nodejs](https://nodejs.org) (preferably [nvm](https://github.com/creationix/nvm))
 
 ### To run the API:
@@ -16,7 +18,7 @@ This is the API for [http://pokeb.ag](http://pokeb.ag), the online inventory man
 
 1. Install npm and bower modules: `npm install`
 
-1. Copy `config-example.json` to `config.json` and enter your Google login credentials
+1. Copy `config-example.json` to `config.json`
 
 1. Start the koa server: `node index.js`
 
