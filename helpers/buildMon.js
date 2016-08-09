@@ -9,7 +9,7 @@ let POGOProtos = require('node-pogo-protos')
 
 
 
-let findOrUpdateLevel = require('../helpers/findOrUpdateLevel')
+let findLevel = require('../helpers/findLevel')
 let specialStats = require('../data/special-stats.json')
 
 
@@ -91,8 +91,9 @@ module.exports = function buildMon (inventoryData) {
   let upgradeInfo = this.state.templates.pokemon_upgrade_settings
 
   let mon = {
+    cp: inventoryData.cp,
     id: inventoryData.id,
-    level: findOrUpdateLevel(inventoryData.cp_multiplier),
+    level: findLevel(inventoryData.cp_multiplier, inventoryData.num_upgrades),
     longID: longID,
     moves: [],
     name: getName(inventoryData.pokemon_id),
@@ -100,7 +101,6 @@ module.exports = function buildMon (inventoryData) {
     no: inventoryData.pokemon_id,
     stats: {
       additionalCpMultiplier: inventoryData.additional_cp_multiplier,
-      cp: inventoryData.cp,
       cpMultiplier: inventoryData.cp_multiplier,
       currentHP: inventoryData.stamina,
       height: inventoryData.height_m,
@@ -119,9 +119,9 @@ module.exports = function buildMon (inventoryData) {
         defense: specials.specialDefense
       },
       speed: specials.speed,
-      upgrades: inventoryData.num_upgrades,
       weight: inventoryData.weight_kg,
-    }
+    },
+    upgrades: inventoryData.num_upgrades
   }
 
   mon.moves.push(getMove.call(this, inventoryData.move_1))
@@ -141,7 +141,8 @@ module.exports = function buildMon (inventoryData) {
   }
 
   if (mon.level < 40) {
-    let levelFloor = Math.floor(mon.level)
+    let levelFloor = Math.floor(mon.level) - 1
+
     mon.toPowerUp = {
       candy: upgradeInfo.candy_cost[levelFloor],
       stardust: upgradeInfo.stardust_cost[levelFloor]
