@@ -137,7 +137,9 @@ module.exports = function buildMon (inventoryData) {
   }
 
   if (baseInfo.candy_to_evolve) {
-    mon.toEvolve = baseInfo.candy_to_evolve
+    mon.toEvolve = {
+      candy: baseInfo.candy_to_evolve
+    }
   }
 
   if (mon.level < 40) {
